@@ -1,0 +1,1122 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ระบบบันทึกประวัติผู้รับบริการร้านยา</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Sarabun', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .header p {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+            flex: 1;
+            min-width: 150px;
+            justify-content: center;
+        }
+
+        .btn-primary {
+            background: #2563eb;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #1d4ed8;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(37,99,235,0.4);
+        }
+
+        .btn-success {
+            background: #059669;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #047857;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(5,150,105,0.4);
+        }
+
+        .btn-danger {
+            background: #dc2626;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #b91c1c;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(220,38,38,0.4);
+        }
+
+        .btn-secondary {
+            background: #6b7280;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #4b5563;
+        }
+
+        .alert {
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .alert-info {
+            background: #dbeafe;
+            border-left: 4px solid #2563eb;
+            color: #1e40af;
+        }
+
+        .alert-success {
+            background: #d1fae5;
+            border-left: 4px solid #059669;
+            color: #065f46;
+        }
+
+        .alert-warning {
+            background: #fef3c7;
+            border-left: 4px solid #f59e0b;
+            color: #92400e;
+        }
+
+        .section {
+            background: #f9fafb;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 25px;
+            border: 1px solid #e5e7eb;
+        }
+
+        .section-header {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #2563eb;
+            color: #1e40af;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-header.green { border-bottom-color: #059669; color: #065f46; }
+        .section-header.purple { border-bottom-color: #9333ea; color: #6b21a8; }
+        .section-header.red { border-bottom-color: #dc2626; color: #991b1b; }
+        .section-header.orange { border-bottom-color: #ea580c; color: #9a3412; }
+        .section-header.teal { border-bottom-color: #0d9488; color: #134e4a; }
+        .section-header.indigo { border-bottom-color: #4f46e5; color: #312e81; }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .form-label .required {
+            color: #dc2626;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 15px;
+            transition: all 0.3s;
+            font-family: inherit;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
+        }
+
+        textarea.form-control {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .checkbox-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+
+        .checkbox-item input[type="checkbox"] {
+            margin-top: 4px;
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        .checkbox-item label {
+            flex: 1;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .radio-group {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .radio-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .radio-item input[type="radio"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        .saved-records {
+            margin-top: 30px;
+        }
+
+        .record-card {
+            background: white;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 15px;
+            transition: all 0.3s;
+        }
+
+        .record-card:hover {
+            border-color: #2563eb;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .record-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .record-name {
+            font-size: 18px;
+            font-weight: bold;
+            color: #1e40af;
+        }
+
+        .record-date {
+            font-size: 14px;
+            color: #6b7280;
+        }
+
+        .record-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .record-info-item {
+            font-size: 14px;
+        }
+
+        .record-info-label {
+            font-weight: 600;
+            color: #6b7280;
+        }
+
+        .record-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .btn-sm {
+            padding: 8px 16px;
+            font-size: 14px;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow-y: auto;
+            width: 100%;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #e5e7eb;
+        }
+
+        .modal-title {
+            font-size: 24px;
+            font-weight: bold;
+            color: #1e40af;
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 30px;
+            cursor: pointer;
+            color: #6b7280;
+            padding: 0;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: all 0.3s;
+        }
+
+        .close-modal:hover {
+            background: #f3f4f6;
+            color: #dc2626;
+        }
+
+        .detail-section {
+            margin-bottom: 20px;
+        }
+
+        .detail-label {
+            font-weight: bold;
+            color: #374151;
+            margin-bottom: 5px;
+        }
+
+        .detail-value {
+            color: #6b7280;
+            padding: 10px;
+            background: #f9fafb;
+            border-radius: 6px;
+            margin-bottom: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .content {
+                padding: 20px;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+
+            .container {
+                box-shadow: none;
+                border-radius: 0;
+            }
+
+            .button-group,
+            .btn,
+            .record-actions {
+                display: none !important;
+            }
+
+            .section {
+                page-break-inside: avoid;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📋 ระบบบันทึกประวัติผู้รับบริการร้านยา</h1>
+            <p>ตามแนวทางร้านยาคุณภาพ (GPP - Good Pharmacy Practice)</p>
+        </div>
+
+        <div class="content">
+            <!-- Alert Messages -->
+            <div id="alertContainer"></div>
+
+            <!-- Action Buttons -->
+            <div class="button-group">
+                <button class="btn btn-success" onclick="saveRecord()">
+                    💾 บันทึกข้อมูล
+                </button>
+                <button class="btn btn-primary" onclick="window.print()">
+                    🖨️ พิมพ์ฟอร์ม
+                </button>
+                <button class="btn btn-secondary" onclick="exportData()">
+                    📥 ส่งออกข้อมูล
+                </button>
+                <button class="btn btn-danger" onclick="clearForm()">
+                    🗑️ ล้างฟอร์ม
+                </button>
+            </div>
+
+            <!-- Form -->
+            <form id="patientForm">
+                <!-- Section 1: ประวัติส่วนตัว -->
+                <div class="section">
+                    <div class="section-header">
+                        👤 1. ประวัติส่วนตัว (Personal Information)
+                    </div>
+                    <div class="form-grid">
+                        <div class="form-group full-width">
+                            <label class="form-label">ชื่อ-นามสกุล <span class="required">*</span></label>
+                            <input type="text" class="form-control" id="fullName" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">เลขบัตรประชาชน</label>
+                            <input type="text" class="form-control" id="idCard" maxlength="17" placeholder="X-XXXX-XXXXX-XX-X">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">เพศ</label>
+                            <select class="form-control" id="gender">
+                                <option value="">เลือก</option>
+                                <option value="male">ชาย</option>
+                                <option value="female">หญิง</option>
+                                <option value="other">อื่นๆ</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">วันเกิด</label>
+                            <input type="date" class="form-control" id="birthDate">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">อายุ (ปี)</label>
+                            <input type="number" class="form-control" id="age" placeholder="ระบุอายุ">
+                        </div>
+                        <div class="form-group full-width">
+                            <label class="form-label">ที่อยู่</label>
+                            <textarea class="form-control" id="address"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">เบอร์โทรศัพท์ <span class="required">*</span></label>
+                            <input type="tel" class="form-control" id="phone" required placeholder="0XX-XXX-XXXX">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">สิทธิการรักษา</label>
+                            <select class="form-control" id="rights">
+                                <option value="">เลือก</option>
+                                <option value="uc">บัตรทอง (UC)</option>
+                                <option value="sso">ประกันสังคม</option>
+                                <option value="csmbs">ข้าราชการ</option>
+                                <option value="private">เบิกเอง</option>
+                                <option value="other">อื่นๆ</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">สถานพยาบาลที่รักษา</label>
+                            <input type="text" class="form-control" id="hospital">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">บุคคลติดต่อฉุกเฉิน</label>
+                            <input type="text" class="form-control" id="emergencyContact">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">เบอร์ติดต่อฉุกเฉิน</label>
+                            <input type="tel" class="form-control" id="emergencyPhone">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 2: ประวัติทั่วไป -->
+                <div class="section">
+                    <div class="section-header green">
+                        📄 2. ประวัติทั่วไป (General Information)
+                    </div>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label">อาชีพ</label>
+                            <input type="text" class="form-control" id="occupation">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">สถานภาพ</label>
+                            <select class="form-control" id="maritalStatus">
+                                <option value="">เลือก</option>
+                                <option value="single">โสด</option>
+                                <option value="married">สมรส</option>
+                                <option value="divorced">หย่า</option>
+                                <option value="widowed">หม้าย</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">รายได้/เดือน</label>
+                            <select class="form-control" id="income">
+                                <option value="">เลือก</option>
+                                <option value="<10000">น้อยกว่า 10,000</option>
+                                <option value="10000-20000">10,000-20,000</option>
+                                <option value="20000-30000">20,000-30,000</option>
+                                <option value="30000-50000">30,000-50,000</option>
+                                <option value=">50000">มากกว่า 50,000</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 3: พฤติกรรมสุขภาพ -->
+                <div class="section">
+                    <div class="section-header purple">
+                        💪 3. พฤติกรรมสุขภาพ (Health Behavior & Lifestyle)
+                    </div>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label">การสูบบุหรี่</label>
+                            <select class="form-control" id="smoking">
+                                <option value="">เลือก</option>
+                                <option value="no">ไม่สูบ</option>
+                                <option value="quit">เลิกแล้ว</option>
+                                <option value="yes">สูบ</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">การดื่มแอลกอฮอล์</label>
+                            <select class="form-control" id="alcohol">
+                                <option value="">เลือก</option>
+                                <option value="no">ไม่ดื่ม</option>
+                                <option value="occasional">ดื่มเป็นครั้งคราว</option>
+                                <option value="regular">ดื่มเป็นประจำ</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">การออกกำลังกาย</label>
+                            <select class="form-control" id="exercise">
+                                <option value="">เลือก</option>
+                                <option value="no">ไม่ออกกำลังกาย</option>
+                                <option value="1-2">1-2 ครั้ง/สัปดาห์</option>
+                                <option value="3-4">3-4 ครั้ง/สัปดาห์</option>
+                                <option value="5+">5 ครั้ง/สัปดาห์ขึ้นไป</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">พฤติกรรมการรับประทานอาหาร</label>
+                            <input type="text" class="form-control" id="diet" placeholder="เช่น กินเค็ม, กินหวาน">
+                        </div>
+                        <div class="form-group full-width">
+                            <label class="form-label">ประวัติการแพ้ยา/อาหาร</label>
+                            <textarea class="form-control" id="allergy"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 4: ประวัติการเจ็บป่วย -->
+                <div class="section">
+                    <div class="section-header red">
+                        🏥 4. ประวัติการเจ็บป่วยและการใช้ยา
+                    </div>
+                    <div class="form-grid">
+                        <div class="form-group full-width">
+                            <label class="form-label">โรคประจำตัว/โรคที่เป็นอยู่</label>
+                            <textarea class="form-control" id="currentDiseases"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">เป็นมานานเท่าไร</label>
+                            <input type="text" class="form-control" id="duration">
+                        </div>
+                        <div class="form-group full-width">
+                            <label class="form-label">ยาที่ใช้อยู่ในปัจจุบัน</label>
+                            <textarea class="form-control" id="medications"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">อาหารเสริม</label>
+                            <input type="text" class="form-control" id="supplements">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">สมุนไพร/ยาแผนไทย</label>
+                            <input type="text" class="form-control" id="herbs">
+                        </div>
+                        <div class="form-group full-width">
+                            <label class="form-label">ผลการตรวจในห้องปฏิบัติการ</label>
+                            <textarea class="form-control" id="labResults"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 5: DRP -->
+                <div class="section">
+                    <div class="section-header orange">
+                        ⚠️ 5. การประเมินปัญหาการใช้ยา (DRP)
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">ประเภทปัญหาที่พบ</label>
+                        <div class="checkbox-group" id="drpCheckboxes">
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="drp1" value="need_therapy">
+                                <label for="drp1">Need for additional therapy - ไม่ได้รับยาที่ควรใช้</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="drp2" value="improper_selection">
+                                <label for="drp2">Improper drug selection - เลือกยาไม่เหมาะสม</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="drp3" value="dosage_low">
+                                <label for="drp3">Dosage too low - ขนาดยาต่ำเกินไป</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="drp4" value="dosage_high">
+                                <label for="drp4">Dosage too high - ขนาดยาสูงเกิน</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="drp5" value="adverse_reaction">
+                                <label for="drp5">Adverse drug reactions - อาการข้างเคียง</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="drp6" value="interaction">
+                                <label for="drp6">Drug interactions - อันตรกิริยา</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="drp7" value="unnecessary">
+                                <label for="drp7">Unnecessary drug therapy - ใช้ยาไม่ตรงข้อบ่งใช้</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="drp8" value="non_compliance">
+                                <label for="drp8">Non-compliance - ใช้ยาไม่ตรงตามสั่ง</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="drp9" value="dispensing_error">
+                                <label for="drp9">Dispensing error - ความคลาดเคลื่อนในการจ่ายยา</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">อาการทางคลินิก</label>
+                        <textarea class="form-control" id="symptoms"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">ปัญหาพฤติกรรม</label>
+                        <textarea class="form-control" id="lifestyleIssues"></textarea>
+                    </div>
+                </div>
+
+                <!-- Section 6: คำแนะนำ -->
+                <div class="section">
+                    <div class="section-header teal">
+                        💡 6. คำแนะนำและการแก้ไข
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">คำแนะนำที่ให้แก่ผู้รับบริการ</label>
+                        <textarea class="form-control" id="recommendation"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">การแทรกแซง/แก้ไขปัญหา</label>
+                        <textarea class="form-control" id="intervention"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">การส่งต่อแพทย์</label>
+                        <textarea class="form-control" id="referral"></textarea>
+                    </div>
+                </div>
+
+                <!-- Section 7: การติดตาม -->
+                <div class="section">
+                    <div class="section-header indigo">
+                        📅 7. การติดตามผล
+                    </div>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label">วันที่นัดติดตาม</label>
+                            <input type="date" class="form-control" id="followUpDate">
+                        </div>
+                        <div class="form-group full-width">
+                            <label class="form-label">รายละเอียดการติดตาม</label>
+                            <textarea class="form-control" id="followUpNote"></textarea>
+                        </div>
+                    </div>
+                </div>
+            </form>
+
+            <!-- Saved Records -->
+            <div class="saved-records">
+                <h2 style="margin-bottom: 20px; color: #1e40af;">📚 ประวัติที่บันทึกไว้</h2>
+                <div id="recordsList"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for viewing record details -->
+    <div id="detailModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">รายละเอียดประวัติผู้รับบริการ</div>
+                <button class="close-modal" onclick="closeModal()">&times;</button>
+            </div>
+            <div id="modalBody"></div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize
+        let records = [];
+        loadRecords();
+        displayRecords();
+
+        // Load records from localStorage
+        function loadRecords() {
+            const saved = localStorage.getItem('patientRecords');
+            if (saved) {
+                records = JSON.parse(saved);
+            }
+        }
+
+        // Save records to localStorage
+        function saveRecords() {
+            localStorage.setItem('patientRecords', JSON.stringify(records));
+        }
+
+        // Save new record
+        function saveRecord() {
+            const fullName = document.getElementById('fullName').value;
+            const phone = document.getElementById('phone').value;
+
+            if (!fullName || !phone) {
+                showAlert('กรุณากรอกชื่อและเบอร์โทรศัพท์', 'warning');
+                return;
+            }
+
+            // Get DRP checkboxes
+            const drpTypes = [];
+            document.querySelectorAll('#drpCheckboxes input[type="checkbox"]:checked').forEach(cb => {
+                drpTypes.push(cb.value);
+            });
+
+            const record = {
+                id: Date.now(),
+                timestamp: new Date().toISOString(),
+                fullName: fullName,
+                idCard: document.getElementById('idCard').value,
+                gender: document.getElementById('gender').value,
+                birthDate: document.getElementById('birthDate').value,
+                age: document.getElementById('age').value,
+                address: document.getElementById('address').value,
+                phone: phone,
+                rights: document.getElementById('rights').value,
+                hospital: document.getElementById('hospital').value,
+                emergencyContact: document.getElementById('emergencyContact').value,
+                emergencyPhone: document.getElementById('emergencyPhone').value,
+                occupation: document.getElementById('occupation').value,
+                maritalStatus: document.getElementById('maritalStatus').value,
+                income: document.getElementById('income').value,
+                smoking: document.getElementById('smoking').value,
+                alcohol: document.getElementById('alcohol').value,
+                exercise: document.getElementById('exercise').value,
+                diet: document.getElementById('diet').value,
+                allergy: document.getElementById('allergy').value,
+                currentDiseases: document.getElementById('currentDiseases').value,
+                duration: document.getElementById('duration').value,
+                medications: document.getElementById('medications').value,
+                supplements: document.getElementById('supplements').value,
+                herbs: document.getElementById('herbs').value,
+                labResults: document.getElementById('labResults').value,
+                drpTypes: drpTypes,
+                symptoms: document.getElementById('symptoms').value,
+                lifestyleIssues: document.getElementById('lifestyleIssues').value,
+                recommendation: document.getElementById('recommendation').value,
+                intervention: document.getElementById('intervention').value,
+                referral: document.getElementById('referral').value,
+                followUpDate: document.getElementById('followUpDate').value,
+                followUpNote: document.getElementById('followUpNote').value
+            };
+
+            records.unshift(record);
+            saveRecords();
+            displayRecords();
+            showAlert('บันทึกข้อมูลสำเร็จ!', 'success');
+            
+            // Scroll to records list
+            document.querySelector('.saved-records').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Display all records
+        function displayRecords() {
+            const container = document.getElementById('recordsList');
+            
+            if (records.length === 0) {
+                container.innerHTML = '<div class="alert alert-info">ยังไม่มีประวัติที่บันทึกไว้</div>';
+                return;
+            }
+
+            let html = '';
+            records.forEach(record => {
+                const date = new Date(record.timestamp);
+                const dateStr = date.toLocaleDateString('th-TH', { 
+                    year: 'numeric', 
+                    month: 'long', 
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+
+                html += `
+                    <div class="record-card">
+                        <div class="record-header">
+                            <div class="record-name">${record.fullName}</div>
+                            <div class="record-date">${dateStr}</div>
+                        </div>
+                        <div class="record-info">
+                            <div class="record-info-item">
+                                <span class="record-info-label">เบอร์:</span> ${record.phone || '-'}
+                            </div>
+                            <div class="record-info-item">
+                                <span class="record-info-label">อายุ:</span> ${record.age || '-'} ปี
+                            </div>
+                            <div class="record-info-item">
+                                <span class="record-info-label">โรค:</span> ${record.currentDiseases || '-'}
+                            </div>
+                        </div>
+                        <div class="record-actions">
+                            <button class="btn btn-primary btn-sm" onclick="viewRecord(${record.id})">
+                                👁️ ดูรายละเอียด
+                            </button>
+                            <button class="btn btn-success btn-sm" onclick="loadRecord(${record.id})">
+                                ✏️ แก้ไข
+                            </button>
+                            <button class="btn btn-danger btn-sm" onclick="deleteRecord(${record.id})">
+                                🗑️ ลบ
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+        }
+
+        // View record details in modal
+        function viewRecord(id) {
+            const record = records.find(r => r.id === id);
+            if (!record) return;
+
+            const genderMap = { male: 'ชาย', female: 'หญิง', other: 'อื่นๆ' };
+            const drpMap = {
+                need_therapy: 'ไม่ได้รับยาที่ควรใช้',
+                improper_selection: 'เลือกยาไม่เหมาะสม',
+                dosage_low: 'ขนาดยาต่ำเกินไป',
+                dosage_high: 'ขนาดยาสูงเกิน',
+                adverse_reaction: 'อาการข้างเคียง',
+                interaction: 'อันตรกิริยา',
+                unnecessary: 'ใช้ยาไม่ตรงข้อบ่งใช้',
+                non_compliance: 'ใช้ยาไม่ตรงตามสั่ง',
+                dispensing_error: 'ความคลาดเคลื่อนในการจ่ายยา'
+            };
+
+            let html = `
+                <div class="detail-section">
+                    <h3 style="color: #2563eb; margin-bottom: 15px;">ข้อมูลส่วนตัว</h3>
+                    <div class="detail-label">ชื่อ-นามสกุล:</div>
+                    <div class="detail-value">${record.fullName}</div>
+                    <div class="detail-label">เพศ:</div>
+                    <div class="detail-value">${genderMap[record.gender] || '-'}</div>
+                    <div class="detail-label">อายุ:</div>
+                    <div class="detail-value">${record.age || '-'} ปี</div>
+                    <div class="detail-label">เบอร์โทรศัพท์:</div>
+                    <div class="detail-value">${record.phone}</div>
+                </div>
+
+                <div class="detail-section">
+                    <h3 style="color: #059669; margin-bottom: 15px;">พฤติกรรมสุขภาพ</h3>
+                    <div class="detail-label">การสูบบุหรี่:</div>
+                    <div class="detail-value">${record.smoking || '-'}</div>
+                    <div class="detail-label">การดื่มแอลกอฮอล์:</div>
+                    <div class="detail-value">${record.alcohol || '-'}</div>
+                    <div class="detail-label">การออกกำลังกาย:</div>
+                    <div class="detail-value">${record.exercise || '-'}</div>
+                    <div class="detail-label">ประวัติการแพ้ยา:</div>
+                    <div class="detail-value">${record.allergy || '-'}</div>
+                </div>
+
+                <div class="detail-section">
+                    <h3 style="color: #dc2626; margin-bottom: 15px;">ประวัติการเจ็บป่วย</h3>
+                    <div class="detail-label">โรคประจำตัว:</div>
+                    <div class="detail-value">${record.currentDiseases || '-'}</div>
+                    <div class="detail-label">ยาที่ใช้:</div>
+                    <div class="detail-value">${record.medications || '-'}</div>
+                    <div class="detail-label">ผลแลป:</div>
+                    <div class="detail-value">${record.labResults || '-'}</div>
+                </div>
+
+                <div class="detail-section">
+                    <h3 style="color: #ea580c; margin-bottom: 15px;">ปัญหาการใช้ยา (DRP)</h3>
+                    <div class="detail-value">
+                        ${record.drpTypes.length > 0 
+                            ? record.drpTypes.map(t => drpMap[t] || t).join(', ') 
+                            : '-'}
+                    </div>
+                    <div class="detail-label">อาการทางคลินิก:</div>
+                    <div class="detail-value">${record.symptoms || '-'}</div>
+                </div>
+
+                <div class="detail-section">
+                    <h3 style="color: #0d9488; margin-bottom: 15px;">คำแนะนำ</h3>
+                    <div class="detail-label">คำแนะนำ:</div>
+                    <div class="detail-value">${record.recommendation || '-'}</div>
+                    <div class="detail-label">การแทรกแซง:</div>
+                    <div class="detail-value">${record.intervention || '-'}</div>
+                </div>
+
+                <div class="detail-section">
+                    <h3 style="color: #4f46e5; margin-bottom: 15px;">การติดตาม</h3>
+                    <div class="detail-label">วันที่นัด:</div>
+                    <div class="detail-value">${record.followUpDate || '-'}</div>
+                    <div class="detail-label">หมายเหตุ:</div>
+                    <div class="detail-value">${record.followUpNote || '-'}</div>
+                </div>
+            `;
+
+            document.getElementById('modalBody').innerHTML = html;
+            document.getElementById('detailModal').classList.add('active');
+        }
+
+        // Load record into form for editing
+        function loadRecord(id) {
+            const record = records.find(r => r.id === id);
+            if (!record) return;
+
+            document.getElementById('fullName').value = record.fullName || '';
+            document.getElementById('idCard').value = record.idCard || '';
+            document.getElementById('gender').value = record.gender || '';
+            document.getElementById('birthDate').value = record.birthDate || '';
+            document.getElementById('age').value = record.age || '';
+            document.getElementById('address').value = record.address || '';
+            document.getElementById('phone').value = record.phone || '';
+            document.getElementById('rights').value = record.rights || '';
+            document.getElementById('hospital').value = record.hospital || '';
+            document.getElementById('emergencyContact').value = record.emergencyContact || '';
+            document.getElementById('emergencyPhone').value = record.emergencyPhone || '';
+            document.getElementById('occupation').value = record.occupation || '';
+            document.getElementById('maritalStatus').value = record.maritalStatus || '';
+            document.getElementById('income').value = record.income || '';
+            document.getElementById('smoking').value = record.smoking || '';
+            document.getElementById('alcohol').value = record.alcohol || '';
+            document.getElementById('exercise').value = record.exercise || '';
+            document.getElementById('diet').value = record.diet || '';
+            document.getElementById('allergy').value = record.allergy || '';
+            document.getElementById('currentDiseases').value = record.currentDiseases || '';
+            document.getElementById('duration').value = record.duration || '';
+            document.getElementById('medications').value = record.medications || '';
+            document.getElementById('supplements').value = record.supplements || '';
+            document.getElementById('herbs').value = record.herbs || '';
+            document.getElementById('labResults').value = record.labResults || '';
+            document.getElementById('symptoms').value = record.symptoms || '';
+            document.getElementById('lifestyleIssues').value = record.lifestyleIssues || '';
+            document.getElementById('recommendation').value = record.recommendation || '';
+            document.getElementById('intervention').value = record.intervention || '';
+            document.getElementById('referral').value = record.referral || '';
+            document.getElementById('followUpDate').value = record.followUpDate || '';
+            document.getElementById('followUpNote').value = record.followUpNote || '';
+
+            // Check DRP checkboxes
+            document.querySelectorAll('#drpCheckboxes input[type="checkbox"]').forEach(cb => {
+                cb.checked = record.drpTypes.includes(cb.value);
+            });
+
+            // Delete old record
+            deleteRecord(id, true);
+
+            // Scroll to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            showAlert('โหลดข้อมูลเรียบร้อย สามารถแก้ไขและบันทึกใหม่ได้', 'info');
+        }
+
+        // Delete record
+        function deleteRecord(id, silent = false) {
+            if (!silent && !confirm('ต้องการลบประวัตินี้หรือไม่?')) {
+                return;
+            }
+
+            records = records.filter(r => r.id !== id);
+            saveRecords();
+            displayRecords();
+            
+            if (!silent) {
+                showAlert('ลบข้อมูลสำเร็จ', 'success');
+            }
+        }
+
+        // Clear form
+        function clearForm() {
+            if (!confirm('ต้องการล้างข้อมูลในฟอร์มหรือไม่?')) {
+                return;
+            }
+
+            document.getElementById('patientForm').reset();
+            document.querySelectorAll('#drpCheckboxes input[type="checkbox"]').forEach(cb => {
+                cb.checked = false;
+            });
+            showAlert('ล้างฟอร์มเรียบร้อย', 'info');
+        }
+
+        // Export data as JSON
+        function exportData() {
+            if (records.length === 0) {
+                showAlert('ไม่มีข้อมูลให้ส่งออก', 'warning');
+                return;
+            }
+
+            const dataStr = JSON.stringify(records, null, 2);
+            const blob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `patient-records-${new Date().toISOString().split('T')[0]}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+            
+            showAlert('ส่งออกข้อมูลสำเร็จ', 'success');
+        }
+
+        // Show alert message
+        function showAlert(message, type = 'info') {
+            const container = document.getElementById('alertContainer');
+            const alert = document.createElement('div');
+            alert.className = `alert alert-${type}`;
+            
+            const icons = {
+                info: 'ℹ️',
+                success: '✅',
+                warning: '⚠️',
+                danger: '❌'
+            };
+            
+            alert.innerHTML = `${icons[type]} ${message}`;
+            container.appendChild(alert);
+
+            setTimeout(() => {
+                alert.style.opacity = '0';
+                setTimeout(() => alert.remove(), 300);
+            }, 3000);
+        }
+
+        // Close modal
+        function closeModal() {
+            document.getElementById('detailModal').classList.remove('active');
+        }
+
+        // Close modal when clicking outside
+        document.getElementById('detailModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+    </script>
+</body>
+</html>
